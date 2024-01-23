@@ -69,6 +69,7 @@ def init(ws_name):
         st.session_state.ws = sh.worksheet(ws_name)
         st.session_state.cur_page = 0
         st.session_state.df = load_csv()
+        st.session_state.progress = 0
 
 
 @st.cache_data
@@ -80,6 +81,7 @@ def main():
     st.title("Header Intrusion")
     st.markdown("Please select the header that does not belong to the group of all others. If you are uncertain, you can mark more than one option, but please try to mark as few candidates as possible.")
 
+    my_bar = st.progress(st.session_state.progress)
     df = st.session_state["df"]
 
     if st.button('submit'):
@@ -90,6 +92,8 @@ def main():
             record_answer()
             get_next_sample()
             record_sample_index()
+            st.session_state.progress += 1
+            my_bar.progress(st.session_state.progress)
     current_row = df.iloc[st.session_state.current_sample_index]
     # for each column in the row, set a checkbox
     for i in range(10):
